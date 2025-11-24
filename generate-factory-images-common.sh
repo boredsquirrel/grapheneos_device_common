@@ -149,7 +149,7 @@ set -e
 
 FASTBOOT_VERSION_STR=\$(fastboot --version | grep "fastboot version " | cut -c18-23)
 FASTBOOT_VERSION_NUM=\$(echo \$FASTBOOT_VERSION_STR | tr -d .)
-if ! [ \$FASTBOOT_VERSION_NUM -ge $MIN_FASTBOOT_VERSION_NUM ]; then
+if [ \$FASTBOOT_VERSION_NUM -lt $MIN_FASTBOOT_VERSION_NUM ]; then
   echo "fastboot version (\$FASTBOOT_VERSION_STR) is older than the minimum supported version ($MIN_FASTBOOT_VERSION_STR)."
   echo "Download the latest version at https://developer.android.com/studio/releases/platform-tools.html and add it to the shell PATH"
   exit 1
@@ -159,7 +159,7 @@ fi
 # The above line is used by FlashCapturer in fastboot
 
 product=\$(fastboot getvar product 2>&1 | grep "product:" | cut -d ' ' -f 2)
-if ! [ \$product = $DEVICE ]; then
+if [ \$product != $DEVICE ]; then
   echo "You're attempting to flash the wrong factory images. This would likely brick your device."
   echo
   echo "These factory images are for $DEVICE and the detected device is \$product."
