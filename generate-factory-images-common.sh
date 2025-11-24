@@ -13,23 +13,23 @@
 # limitations under the License.
 
 # Use the default values if they weren't explicitly set
-if test "$XLOADERSRC" = ""
+if [ -n "$XLOADERSRC" ]
 then
   XLOADERSRC=xloader.img
 fi
-if test "$BOOTLOADERSRC" = ""
+if [ -n "$BOOTLOADERSRC" ]
 then
   BOOTLOADERSRC=bootloader.img
 fi
-if test "$RADIOSRC" = ""
+if [ -n "$RADIOSRC" ]
 then
   RADIOSRC=radio.img
 fi
-if test "$GSCFIRMWARESRC" = ""
+if [ -n "$GSCFIRMWARESRC" ]
 then
   GSCFIRMWARESRC=dauntless
 fi
-if test "$SLEEPDURATION" = ""
+if [ -n "$SLEEPDURATION" ]
 then
   SLEEPDURATION=5
 fi
@@ -39,19 +39,19 @@ rm -rf tmp
 mkdir -p tmp/$PRODUCT-$VERSION
 
 # Extract the bootloader(s) and radio(s) as necessary
-if test "$XLOADER" != ""
+if [ -n "$XLOADER" ]
 then
   unzip -d tmp ${SRCPREFIX}$PRODUCT-target_files.zip RADIO/$XLOADERSRC
 fi
-if test "$BOOTLOADERFILE" = ""
+if [ -n "$BOOTLOADERFILE" ]
 then
   unzip -d tmp ${SRCPREFIX}$PRODUCT-target_files.zip RADIO/$BOOTLOADERSRC
 fi
-if test "$RADIO" != "" -a "$RADIOFILE" = ""
+if [ -n "$RADIO" ] && [ -n "$RADIOFILE" ]
 then
   unzip -d tmp ${SRCPREFIX}$PRODUCT-target_files.zip RADIO/$RADIOSRC
 fi
-if test "$CDMARADIO" != "" -a "$CDMARADIOFILE" = ""
+if [ -n "$CDMARADIO" ] && [ -n "$CDMARADIOFILE" ]
 then
   unzip -d tmp ${SRCPREFIX}$PRODUCT-target_files.zip RADIO/radio-cdma.img
 fi
@@ -61,35 +61,35 @@ unzip -d tmp ${SRCPREFIX}$PRODUCT-target_files.zip VENDOR/firmware/$GSCFIRMWARES
 
 # Copy the various images in their staging location
 cp ${SRCPREFIX}$PRODUCT-img-$BUILD.zip tmp/$PRODUCT-$VERSION/image-$PRODUCT-$VERSION.zip
-if test "$XLOADER" != ""
+if [ -n "$XLOADER" ]
 then
   cp tmp/RADIO/$XLOADERSRC tmp/$PRODUCT-$VERSION/xloader-$DEVICE-$XLOADER.img
 fi
-if test "$BOOTLOADERFILE" = ""
+if [ -n "$BOOTLOADERFILE" ]
 then
   cp tmp/RADIO/$BOOTLOADERSRC tmp/$PRODUCT-$VERSION/bootloader-$DEVICE-$BOOTLOADER.img
 else
   cp $BOOTLOADERFILE tmp/$PRODUCT-$VERSION/bootloader-$DEVICE-$BOOTLOADER.img
 fi
-if test "$RADIO" != ""
+if [ -n "$RADIO" ]
 then
-  if test "$RADIOFILE" = ""
+  if [ -n "$RADIOFILE" ]
   then
     cp tmp/RADIO/$RADIOSRC tmp/$PRODUCT-$VERSION/radio-$DEVICE-$RADIO.img
   else
     cp $RADIOFILE tmp/$PRODUCT-$VERSION/radio-$DEVICE-$RADIO.img
   fi
 fi
-if test "$CDMARADIO" != ""
+if [ -n "$CDMARADIO" ]
 then
-  if test "$CDMARADIOFILE" = ""
+  if [ -n "$CDMARADIOFILE" ]
   then
     cp tmp/RADIO/radio-cdma.img tmp/$PRODUCT-$VERSION/radio-cdma-$DEVICE-$CDMARADIO.img
   else
     cp $CDMARADIOFILE tmp/$PRODUCT-$VERSION/radio-cdma-$DEVICE-$CDMARADIO.img
   fi
 fi
-if test "$AVB_PKMD" != ""
+if [ -n "$AVB_PKMD" ]
 then
   cp "$AVB_PKMD" tmp/$PRODUCT-$VERSION/avb_pkmd.bin
 fi
@@ -364,7 +364,7 @@ fastboot erase system
 fastboot erase userdata
 EOF
 fi
-if test "$XLOADER" != ""
+if [ -n "$XLOADER" ]
 then
 cat >> tmp/$PRODUCT-$VERSION/flash-all.bat << EOF
 fastboot flash xloader xloader-$DEVICE-$XLOADER.img
@@ -388,7 +388,7 @@ cat >> tmp/$PRODUCT-$VERSION/flash-all.bat << EOF
 fastboot reboot-bootloader
 ping -n $SLEEPDURATION 127.0.0.1 >nul
 EOF
-if test "$RADIO" != ""
+if [ -n "$RADIO" ]
 then
 cat >> tmp/$PRODUCT-$VERSION/flash-all.bat << EOF
 fastboot flash radio radio-$DEVICE-$RADIO.img
@@ -396,7 +396,7 @@ fastboot reboot-bootloader
 ping -n $SLEEPDURATION 127.0.0.1 >nul
 EOF
 fi
-if test "$CDMARADIO" != ""
+if [ -n "$CDMARADIO" ]
 then
 cat >> tmp/$PRODUCT-$VERSION/flash-all.bat << EOF
 fastboot flash radio-cdma radio-cdma-$DEVICE-$CDMARADIO.img
@@ -404,7 +404,7 @@ fastboot reboot-bootloader
 ping -n $SLEEPDURATION 127.0.0.1 >nul
 EOF
 fi
-if test "$AVB_PKMD" != ""
+if [ -n "$AVB_PKMD" ]
 then
 cat >> tmp/$PRODUCT-$VERSION/flash-all.bat << EOF
 fastboot erase avb_custom_key
